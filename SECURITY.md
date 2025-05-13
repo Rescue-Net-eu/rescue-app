@@ -1,5 +1,7 @@
 🔐 Security Policy
+
 Reporting a Vulnerability
+
 If you discover a security vulnerability in rescue-net.eu, we appreciate your help in disclosing it to us responsibly.
 
 Please report the issue by emailing security@rescue-net.eu with the following details:
