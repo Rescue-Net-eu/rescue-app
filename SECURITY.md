@@ -18,7 +18,10 @@ Proof of Concept: If available, a proof-of-concept or exploit code.
 
 Please do not disclose the vulnerability publicly until we have had a chance to address it.
 
-Our Commitment
+
+
+Our Commitment:
+
 We take security seriously and will respond promptly to any reported vulnerabilities. Our process includes:
 
 Acknowledging receipt of your report within 5 business days.
