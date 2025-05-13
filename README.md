@@ -1,6 +1,6 @@
 # 🆘 Rescue-Net
 
-**[rescue-net.eu](https://rescue-net.eu)** is an open-source platform designed to coordinate and mobilize volunteers across Europe in real-time emergency situations. Inspired by initiatives like [Rescue 4x4 România](https://www.facebook.com/rescue4x4/) and the ethos of “There’s a hero in each of us,” the project aims to empower communities to respond swiftly and effectively to crises.
+**[rescue-net.eu](https://rescue-net.eu)** is an open-source platform designed to coordinate and mobilize volunteers across Europe in real-time emergency situations. Inspired by initiatives like [Rescue 4x4 România](https://www.facebook.com/rescue4x4/) the project aims to empower communities to respond swiftly and effectively to crises.
 
 ---
 
