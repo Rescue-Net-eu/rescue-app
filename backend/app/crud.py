@@ -4,13 +4,14 @@ from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import models, schemas
+from app.utils import hash_password
 
 
 async def create_user(db: AsyncSession, user: schemas.UserCreate) -> models.User:
     db_user = models.User(
         name=user.name,
         email=user.email,
-        hashed_password=user.password,
+        hashed_password=hash_password(user.password),
         latitude=user.latitude,
         longitude=user.longitude,
         skills=user.skills,
