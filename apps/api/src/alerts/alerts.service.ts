@@ -20,6 +20,8 @@ export class AlertsService {
         country: dto.country,
         region: dto.region,
         localities: dto.localities,
+        latitude: dto.latitude,
+        longitude: dto.longitude,
         status: 'PENDING_APPROVAL',
         createdBy: userId,
       },

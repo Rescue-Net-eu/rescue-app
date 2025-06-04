@@ -1,5 +1,11 @@
-import { IsString, IsOptional, IsUUID, IsArray, ArrayNotEmpty, IsEnum } from 'class-validator';
-import { AlertStatus } from '@prisma/client';
+import {
+  IsString,
+  IsOptional,
+  IsUUID,
+  IsArray,
+  ArrayNotEmpty,
+  IsNumber,
+} from 'class-validator';
 
 export class CreateAlertDto {
   @IsString()
@@ -23,4 +29,12 @@ export class CreateAlertDto {
   @ArrayNotEmpty()
   @IsString({ each: true })
   localities: string[];
+
+  @IsOptional()
+  @IsNumber()
+  latitude?: number;
+
+  @IsOptional()
+  @IsNumber()
+  longitude?: number;
 }
