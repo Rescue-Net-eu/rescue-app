@@ -1,14 +1,12 @@
-import './globals.css';
-import type { ReactNode } from 'react';
+import { appWithTranslation } from 'next-i18next';
+import '../styles/globals.css';
 
-export const metadata = {
-  title: 'Rescue Net'
-};
-
-export default function RootLayout({ children }: { children: ReactNode }) {
+function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>{children}</body>
     </html>
   );
 }
+
+export default appWithTranslation(RootLayout);

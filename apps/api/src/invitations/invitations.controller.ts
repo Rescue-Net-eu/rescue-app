@@ -1,13 +1,18 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query } from '@nestjs/common';
 import { InvitationsService } from './invitations.service';
 import { CreateInvitationDto } from './dto/create-invitation.dto';
 
 @Controller('invitations')
 export class InvitationsController {
-  constructor(private service: InvitationsService) {}
+  constructor(private readonly invitations: InvitationsService) {}
 
   @Post()
-  create(@Body() dto: CreateInvitationDto) {
-    return this.service.create(dto);
+  async create(@Body() dto: CreateInvitationDto) {
+    return this.invitations.create(dto);
+  }
+
+  @Get('validate')
+  async validate(@Query('token') token: string) {
+    return this.invitations.validate(token);
   }
 }

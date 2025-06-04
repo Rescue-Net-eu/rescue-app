@@ -1,4 +1,20 @@
-export async function sendEmail(to: string, subject: string, body: string) {
-  console.log(`Sending email to ${to}: ${subject}`);
-  // integrate SMTP here
+import * as nodemailer from 'nodemailer';
+
+export async function sendEmail(to: string, subject: string, html: string) {
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT),
+    secure: false,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+
+  await transporter.sendMail({
+    from: `"Rescue-Net.eu" <${process.env.SMTP_USER}>`,
+    to,
+    subject,
+    html,
+  });
 }
