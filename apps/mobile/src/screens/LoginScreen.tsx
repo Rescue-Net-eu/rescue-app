@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, Button, Alert, ActivityIndicator, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
+import messaging from '@react-native-firebase/messaging';
+import { request, PERMISSIONS } from 'react-native-permissions';
+import axios from 'axios';
 
 export default function LoginScreen() {
   const { t } = useTranslation();
@@ -22,6 +25,26 @@ export default function LoginScreen() {
       const { access_token } = await res.json();
       await AsyncStorage.setItem('token', access_token);
       await AsyncStorage.setItem('userId', access_token.split('.')[1]);
+
+      const perm = await request(
+        Platform.OS === 'ios'
+          ? PERMISSIONS.IOS.NOTIFICATIONS
+          : PERMISSIONS.ANDROID.NOTIFICATIONS,
+      );
+      if (perm === 'granted') {
+        const token = await messaging().getToken();
+        await axios.post(
+          'http://localhost:3000/api/push/register',
+          {
+            platform: Platform.OS === 'ios' ? 'ios' : 'android',
+            token,
+          },
+          {
+            headers: { Authorization: `Bearer ${access_token}` },
+          },
+        );
+      }
+
       navigation.navigate('VolunteerDashboard');
     } else {
       Alert.alert(t('login.error_invalid'));

@@ -9,6 +9,7 @@ import { MembershipsModule } from './memberships/memberships.module';
 import { MissionsModule } from './missions/missions.module';
 import { AlertsModule } from './alerts/alerts.module';
 import { PasswordResetModule } from './password-reset/password-reset.module';
+import { PushModule } from './push/push.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { PasswordResetModule } from './password-reset/password-reset.module';
     MissionsModule,
     AlertsModule,
     PasswordResetModule,
+    PushModule,
   ],
   controllers: [HealthController],
 })
