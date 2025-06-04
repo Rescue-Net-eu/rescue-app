@@ -9,6 +9,8 @@ import {
   Query,
   UseGuards,
   Req,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { AlertsService } from './alerts.service';
 import { CreateAlertDto } from './dto/create-alert.dto';
@@ -17,6 +19,8 @@ import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { Role } from '@prisma/client';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { Express } from 'express';
 
 @Controller('alerts')
 export class AlertsController {
@@ -24,9 +28,18 @@ export class AlertsController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.PLATFORM_ADMIN, Role.GOV_OPERATOR, Role.INST_OPERATOR, Role.ORG_OPERATOR, Role.ERCC_OPERATOR)
+  @UseInterceptors(
+    FileFieldsInterceptor([{ name: 'images', maxCount: 5 }], {
+      limits: { fileSize: 5 * 1024 * 1024 },
+    }),
+  )
   @Post()
-  create(@Body() createAlertDto: CreateAlertDto, @Req() req: any) {
-    return this.alertsService.create(createAlertDto, req.user.userId);
+  create(
+    @Body() createAlertDto: CreateAlertDto,
+    @Req() req: any,
+    @UploadedFiles() files: { images?: Express.Multer.File[] },
+  ) {
+    return this.alertsService.create(createAlertDto, req.user.userId, files?.images);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

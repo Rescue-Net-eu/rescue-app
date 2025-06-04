@@ -7,8 +7,10 @@ import {
   FlatList,
   ActivityIndicator,
   Alert,
+  Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { launchImageLibrary, Asset } from 'react-native-image-picker';
 import { useTranslation } from 'react-i18next';
 
 type AlertType = {
@@ -21,6 +23,7 @@ type AlertType = {
   status: string;
   latitude?: number;
   longitude?: number;
+  images?: { url: string }[];
 };
 
 export default function AdminAlertsScreen() {
@@ -34,6 +37,7 @@ export default function AdminAlertsScreen() {
   const [localities, setLocalities] = useState('');
   const [latitude, setLatitude] = useState<string>('');
   const [longitude, setLongitude] = useState<string>('');
+  const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(false);
 
   const tokenPromise = AsyncStorage.getItem('token');
@@ -65,37 +69,52 @@ export default function AdminAlertsScreen() {
           console.error(err);
           Alert.alert('Unable to get location, please enter manually.');
         },
-        { enableHighAccuracy: true }
+        { enableHighAccuracy: true },
       );
     } else {
       Alert.alert('Geolocation not supported.');
     }
   };
 
+  const pickImages = async () => {
+    const result = await launchImageLibrary({ mediaType: 'photo', selectionLimit: 5 });
+    if (result.assets) {
+      setSelectedAssets(result.assets);
+    }
+  };
+
   const createAlert = async () => {
     const token = await tokenPromise;
     const orgId = await orgIdPromise;
-    const body: any = {
-      title,
-      description,
-      sourceOrgId: orgId,
-      country,
-      region,
-      localities: localities.split(',').map((l) => l.trim()),
-    };
-    if (latitude !== '') {
-      body.latitude = parseFloat(latitude);
-    }
-    if (longitude !== '') {
-      body.longitude = parseFloat(longitude);
-    }
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('sourceOrgId', orgId as string);
+    formData.append('country', country);
+    if (region) formData.append('region', region);
+    formData.append('localities', JSON.stringify(localities.split(',').map((l) => l.trim())));
+    if (latitude !== '') formData.append('latitude', latitude);
+    if (longitude !== '') formData.append('longitude', longitude);
+
+    selectedAssets.forEach((asset) => {
+      if (!asset.uri) return;
+      const uriParts = asset.uri.split('/');
+      const name = uriParts[uriParts.length - 1];
+      const type = asset.type || 'image/jpeg';
+      formData.append('images', {
+        uri: asset.uri,
+        name,
+        type,
+      } as any);
+    });
+
     await fetch('http://localhost:3000/api/alerts', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
       },
-      body: JSON.stringify(body),
+      body: formData,
     });
     fetchAlerts();
     Alert.alert('Alert created');
@@ -118,7 +137,6 @@ export default function AdminAlertsScreen() {
   return (
     <View style={{ padding: 16 }}>
       <Text style={{ fontSize: 24, marginBottom: 16 }}>{t('admin.create_alert')}</Text>
-
       <TextInput
         placeholder={t('alerts.title_label')}
         value={title}
@@ -150,7 +168,6 @@ export default function AdminAlertsScreen() {
         onChangeText={setLocalities}
         style={{ borderWidth: 1, marginBottom: 8, padding: 8 }}
       />
-
       <View style={{ flexDirection: 'row', marginBottom: 8 }}>
         <TextInput
           placeholder={t('alerts.latitude_label')}
@@ -167,14 +184,16 @@ export default function AdminAlertsScreen() {
           style={{ flex: 1, borderWidth: 1, marginLeft: 4, padding: 8 }}
         />
       </View>
-
       <Button title={t('alerts.use_my_location')} onPress={grabMyLocation} />
-
       <View style={{ height: 8 }} />
+      <Button title={t('alerts.image_upload_label')} onPress={pickImages} />
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginVertical: 8 }}>
+        {selectedAssets.map((asset) => (
+          <Image key={asset.uri} source={{ uri: asset.uri }} style={{ width: 80, height: 80, marginRight: 8, marginBottom: 8 }} />
+        ))}
+      </View>
       <Button title={t('alerts.submit_button')} onPress={createAlert} />
-
       {loading && <ActivityIndicator style={{ marginVertical: 8 }} />}
-
       <Text style={{ fontSize: 20, marginVertical: 16 }}>Existing Alerts</Text>
       {loading ? (
         <ActivityIndicator />
@@ -183,40 +202,24 @@ export default function AdminAlertsScreen() {
           data={alerts}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <View
-              style={{
-                marginBottom: 12,
-                borderWidth: 1,
-                padding: 8,
-                borderRadius: 4,
-              }}
-            >
+            <View style={{ marginBottom: 12, borderWidth: 1, padding: 8, borderRadius: 4 }}>
               <Text style={{ fontWeight: 'bold' }}>
                 {item.title} ({t(`alerts.${item.status.toLowerCase()}_message`)})
               </Text>
               <Text>{item.description}</Text>
-              <Text>
-                {t('alerts.country_label')}: {item.country}
-              </Text>
-              {item.region && (
-                <Text>
-                  {t('alerts.region_label')}: {item.region}
-                </Text>
-              )}
-              <Text>
-                {t('alerts.locality_label')}: {item.localities.join(', ')}
-              </Text>
+              <Text>{t('alerts.country_label')}: {item.country}</Text>
+              {item.region && <Text>{t('alerts.region_label')}: {item.region}</Text>}
+              <Text>{t('alerts.locality_label')}: {item.localities.join(', ')}</Text>
               {item.latitude != null && item.longitude != null && (
-                <Text>
-                  {t('alerts.coordinates_label')}: {item.latitude.toFixed(6)}, {item.longitude.toFixed(6)}
-                </Text>
+                <Text>{t('alerts.coordinates_label')}: {item.latitude.toFixed(6)}, {item.longitude.toFixed(6)}</Text>
               )}
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 }}>
+                {item.images?.map((img) => (
+                  <Image key={img.url} source={{ uri: `http://localhost:3000/${img.url}` }} style={{ width: 80, height: 80, marginRight: 8, marginBottom: 8 }} />
+                ))}
+              </View>
               {item.status === 'PENDING_APPROVAL' && (
-                <Button
-                  title={t('admin.approve_alert')}
-                  onPress={() => approveAlert(item.id)}
-                  color="green"
-                />
+                <Button title={t('admin.approve_alert')} onPress={() => approveAlert(item.id)} color="green" />
               )}
             </View>
           )}
