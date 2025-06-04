@@ -2,17 +2,18 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { PrismaService } from '../prisma.service';
 import { CreateAlertDto } from './dto/create-alert.dto';
 import { UpdateAlertStatusDto } from './dto/update-alert-status.dto';
+import { Express } from 'express';
 
 @Injectable()
 export class AlertsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(dto: CreateAlertDto, userId: string) {
+  async create(dto: CreateAlertDto, userId: string, files?: Express.Multer.File[]) {
     const org = await this.prisma.organization.findUnique({ where: { id: dto.sourceOrgId } });
     if (!org || !org.isActive) {
       throw new BadRequestException('Source organization not found or not active');
     }
-    return this.prisma.alert.create({
+    const alert = await this.prisma.alert.create({
       data: {
         title: dto.title,
         description: dto.description,
@@ -26,6 +27,20 @@ export class AlertsService {
         createdBy: userId,
       },
     });
+
+    if (files && files.length > 0) {
+      const createImages = files.map((file) =>
+        this.prisma.alertImage.create({
+          data: {
+            alertId: alert.id,
+            url: file.path,
+          },
+        })
+      );
+      await Promise.all(createImages);
+    }
+
+    return alert;
   }
 
   async findAll(scope: 'local' | 'region' | 'country' | 'all', user: any) {
@@ -37,11 +52,11 @@ export class AlertsService {
     } else if (scope === 'country') {
       whereClause = { country: user.country, status: 'ACTIVE' };
     }
-    return this.prisma.alert.findMany({ where: whereClause });
+    return this.prisma.alert.findMany({ where: whereClause, include: { images: true } });
   }
 
   async findOne(id: string) {
-    const alert = await this.prisma.alert.findUnique({ where: { id } });
+    const alert = await this.prisma.alert.findUnique({ where: { id }, include: { images: true } });
     if (!alert) throw new NotFoundException('Alert not found');
     return alert;
   }

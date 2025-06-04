@@ -15,7 +15,9 @@
     "submit_button": "Submit",
     "pending_message": "Waiting for approval",
     "active_message": "Active",
-    "closed_message": "Closed"
+    "closed_message": "Closed",
+    "image_upload_label": "Upload Images",
+    "image_preview_label": "Attached Images"
   },
   "signup": {
     "title": "Complete Your Volunteer Profile",
