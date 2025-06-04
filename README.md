@@ -55,9 +55,3 @@ python3 -m http.server 8080
 ```
 
 Then open [http://localhost:8080](http://localhost:8080) in your browser.
-
-## 🔒 Password Hashing
-
-User passwords are now hashed using **bcrypt** via `passlib`. You can tune the
-hashing complexity by setting the optional `BCRYPT_ROUNDS` environment variable
-when running the backend. The default is `12` rounds.
