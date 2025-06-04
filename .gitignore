@@ -1,32 +1,26 @@
-# Python bytecode and cache directories
-__pycache__/
-*.py[cod]
-*.pyc
-
-# Virtual environments
-venv/
-env/
-
-# Node dependencies
+# Node.js
 node_modules/
-
-# Build directories
-build/
-dist/
-*.egg-info/
-
-# Logs
-*.log
-
-# IDE settings
-.vscode/
-.idea/
-
-# OS-specific files
+npm-debug.log*
+.env
 .DS_Store
 
-# Mobile app build output
-mobile/app/build/
+# Turborepo
+.turbo/
+cache/
 
-# Editor swap files
-*.swp
+# Next.js
+apps/web/node_modules/
+apps/web/.next/
+
+# NestJS
+apps/api/node_modules/
+apps/api/dist/
+
+# Prisma
+apps/api/prisma/migrations/
+
+# React Native
+apps/mobile/node_modules/
+apps/mobile/ios/Pods/
+apps/mobile/android/app/build/
+apps/mobile/ios/build/
