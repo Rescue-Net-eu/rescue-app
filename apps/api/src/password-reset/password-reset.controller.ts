@@ -1,12 +1,17 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { PasswordResetService } from './password-reset.service';
 
-@Controller('password-reset')
+@Controller()
 export class PasswordResetController {
-  constructor(private service: PasswordResetService) {}
+  constructor(private readonly passwordResetService: PasswordResetService) {}
 
-  @Post()
-  reset(@Body('email') email: string) {
-    return this.service.reset(email);
+  @Post('password-reset-request')
+  requestReset(@Body('email') email: string) {
+    return this.passwordResetService.requestReset(email);
+  }
+
+  @Post('password-reset')
+  resetPassword(@Body('token') token: string, @Body('newPassword') newPassword: string) {
+    return this.passwordResetService.resetPassword(token, newPassword);
   }
 }

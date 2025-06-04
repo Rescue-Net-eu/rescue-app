@@ -1,1 +1,56 @@
-{"welcome":"Welcome"}
+{
+  "alerts": {
+    "create_button": "Create Alert",
+    "title_label": "Title",
+    "description_label": "Description",
+    "placeholder_title": "Enter alert title",
+    "placeholder_description": "Enter alert description",
+    "country_label": "Country",
+    "region_label": "Region",
+    "locality_label": "Locality",
+    "submit_button": "Submit",
+    "pending_message": "Waiting for approval",
+    "active_message": "Active",
+    "closed_message": "Closed"
+  },
+  "signup": {
+    "title": "Complete Your Volunteer Profile",
+    "first_name_label": "First Name",
+    "last_name_label": "Last Name",
+    "email_label": "Email",
+    "age_label": "Age",
+    "city_label": "City",
+    "country_label": "Country",
+    "specialization_label": "Specialization",
+    "submit_button": "Register",
+    "invalid_token": "Invalid or expired link",
+    "success_message": "Thank you for registering"
+  },
+  "login": {
+    "title": "Login",
+    "email_placeholder": "Enter your email",
+    "password_placeholder": "Enter your password",
+    "submit_button": "Log In",
+    "error_invalid": "Invalid credentials"
+  },
+  "dashboard": {
+    "welcome": "Welcome, {{name}}",
+    "view_missions": "View Missions",
+    "subscribe_alert": "Subscribe to Alert",
+    "view_alerts": "View Alerts"
+  },
+  "admin": {
+    "create_alert": "Create Alert",
+    "approve_alert": "Approve Alert",
+    "filter_label": "Filter by",
+    "status_label": "Status"
+  },
+  "common": {
+    "loading": "Loading...",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "required": "Required"
+  }
+}

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { CreateAlertDto } from './dto/create-alert.dto';
 import { UpdateAlertStatusDto } from './dto/update-alert-status.dto';
@@ -7,15 +7,66 @@ import { UpdateAlertStatusDto } from './dto/update-alert-status.dto';
 export class AlertsService {
   constructor(private prisma: PrismaService) {}
 
-  findAll() {
-    return this.prisma.alert.findMany();
+  async create(dto: CreateAlertDto, userId: string) {
+    const org = await this.prisma.organization.findUnique({ where: { id: dto.sourceOrgId } });
+    if (!org || !org.isActive) {
+      throw new BadRequestException('Source organization not found or not active');
+    }
+    return this.prisma.alert.create({
+      data: {
+        title: dto.title,
+        description: dto.description,
+        sourceOrgId: dto.sourceOrgId,
+        country: dto.country,
+        region: dto.region,
+        localities: dto.localities,
+        status: 'PENDING_APPROVAL',
+        createdBy: userId,
+      },
+    });
   }
 
-  create(dto: CreateAlertDto) {
-    return this.prisma.alert.create({ data: dto });
+  async findAll(scope: 'local' | 'region' | 'country' | 'all', user: any) {
+    let whereClause: any = {};
+    if (scope === 'local') {
+      whereClause = { localities: { has: user.city }, status: 'ACTIVE' };
+    } else if (scope === 'region') {
+      whereClause = { region: user.region, status: 'ACTIVE' };
+    } else if (scope === 'country') {
+      whereClause = { country: user.country, status: 'ACTIVE' };
+    }
+    return this.prisma.alert.findMany({ where: whereClause });
   }
 
-  updateStatus(id: number, dto: UpdateAlertStatusDto) {
-    return this.prisma.alert.update({ where: { id }, data: dto });
+  async findOne(id: string) {
+    const alert = await this.prisma.alert.findUnique({ where: { id } });
+    if (!alert) throw new NotFoundException('Alert not found');
+    return alert;
+  }
+
+  async updateStatus(id: string, dto: UpdateAlertStatusDto) {
+    const existing = await this.prisma.alert.findUnique({ where: { id } });
+    if (!existing) throw new NotFoundException('Alert not found');
+    return this.prisma.alert.update({
+      where: { id },
+      data: { status: dto.status },
+    });
+  }
+
+  async remove(id: string) {
+    return this.prisma.alert.delete({ where: { id } });
+  }
+
+  async subscribe(alertId: string, userId: string) {
+    const alert = await this.prisma.alert.findUnique({ where: { id: alertId } });
+    if (!alert || alert.status !== 'ACTIVE') {
+      throw new BadRequestException('Cannot subscribe to inactive or non-existent alert');
+    }
+    return this.prisma.alertSubscription.create({
+      data: {
+        alertId,
+        userId,
+      },
+    });
   }
 }

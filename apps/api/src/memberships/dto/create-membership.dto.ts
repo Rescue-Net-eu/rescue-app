@@ -1,4 +1,25 @@
+import { IsUUID, IsEnum, IsBoolean, IsOptional } from 'class-validator';
+import { Role, Status } from '@prisma/client';
+
 export class CreateMembershipDto {
-  userId: number;
-  role: string;
+  @IsUUID()
+  userId: string;
+
+  @IsUUID()
+  orgId: string;
+
+  @IsEnum(Role)
+  role: Role;
+
+  @IsOptional()
+  @IsBoolean()
+  activeByOrg?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  activeByUser?: boolean;
+
+  @IsOptional()
+  @IsEnum(Status)
+  status?: Status;
 }

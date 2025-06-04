@@ -1,24 +1,64 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { AlertsService } from './alerts.service';
 import { CreateAlertDto } from './dto/create-alert.dto';
 import { UpdateAlertStatusDto } from './dto/update-alert-status.dto';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
+import { Role } from '@prisma/client';
 
 @Controller('alerts')
 export class AlertsController {
-  constructor(private service: AlertsService) {}
+  constructor(private readonly alertsService: AlertsService) {}
 
-  @Get()
-  findAll() {
-    return this.service.findAll();
-  }
-
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.PLATFORM_ADMIN, Role.GOV_OPERATOR, Role.INST_OPERATOR, Role.ORG_OPERATOR, Role.ERCC_OPERATOR)
   @Post()
-  create(@Body() dto: CreateAlertDto) {
-    return this.service.create(dto);
+  create(@Body() createAlertDto: CreateAlertDto, @Req() req: any) {
+    return this.alertsService.create(createAlertDto, req.user.userId);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get()
+  findAll(@Query('scope') scope: 'local' | 'region' | 'country' | 'all', @Req() req: any) {
+    return this.alertsService.findAll(scope, req.user);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.alertsService.findOne(id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.PLATFORM_ADMIN, Role.GOV_OPERATOR, Role.INST_OPERATOR, Role.ORG_OPERATOR, Role.ERCC_OPERATOR)
   @Patch(':id/status')
-  updateStatus(@Param('id') id: number, @Body() dto: UpdateAlertStatusDto) {
-    return this.service.updateStatus(+id, dto);
+  updateStatus(@Param('id') id: string, @Body() updateAlertStatusDto: UpdateAlertStatusDto) {
+    return this.alertsService.updateStatus(id, updateAlertStatusDto);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.PLATFORM_ADMIN)
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.alertsService.remove(id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.VOLUNTEER)
+  @Post(':id/subscribe/:userId')
+  subscribe(@Param('id') id: string, @Param('userId') userId: string) {
+    return this.alertsService.subscribe(id, userId);
   }
 }

@@ -1,14 +1,185 @@
- datasource db {
+datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
- }
- 
- generator client {
+}
+
+generator client {
   provider = "prisma-client-js"
- }
- 
- model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
- }
+}
+
+model User {
+  id            String    @id @default(uuid())
+  userType      UserType
+  firstName     String
+  lastName      String
+  age           Int?
+  sex           Sex?
+  city          String
+  country       String
+  email         String    @unique
+  username      String    @unique
+  passwordHash  String
+  isActive      Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  memberships   Membership[]
+  missions      UserMission[]
+  alerts        AlertSubscription[]
+}
+
+model Organization {
+  id              String    @id @default(uuid())
+  name            String
+  kind            OrgKind
+  country         String
+  isActive        Boolean   @default(false)
+  isCentral       Boolean   @default(false)
+  centralOrgId    String?   @db.Uuid
+  dpaAgreementUrl String?
+  createdAt       DateTime  @default(now())
+  memberships     Membership[]
+  alertsCreated   Alert[]   @relation("OrgAlerts", fields: [id], references: [sourceOrgId])
+}
+
+model Membership {
+  id            String      @id @default(uuid())
+  user          User        @relation(fields: [userId], references: [id])
+  userId        String      @db.Uuid
+  organization  Organization @relation(fields: [orgId], references: [id])
+  orgId         String      @db.Uuid
+  role          Role
+  activeByOrg   Boolean     @default(true)
+  activeByUser  Boolean     @default(true)
+  status        Status      @default(ACTIVE)
+  joinedAt      DateTime    @default(now())
+
+  @@index([userId])
+  @@index([orgId])
+}
+
+model Mission {
+  id          String        @id @default(uuid())
+  title       String
+  description String?
+  createdAt   DateTime      @default(now())
+  createdBy   String        @db.Uuid
+  assignments UserMission[]
+}
+
+model UserMission {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.Uuid
+  mission   Mission  @relation(fields: [missionId], references: [id])
+  missionId String   @db.Uuid
+  assignedAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([missionId])
+}
+
+model Alert {
+  id          String         @id @default(uuid())
+  title       String
+  description String?
+  sourceOrgId String         @db.Uuid
+  country     String
+  region      String?
+  localities  String[]       // array of strings
+  status      AlertStatus    @default(PENDING_APPROVAL)
+  createdBy   String         @db.Uuid
+  createdAt   DateTime       @default(now())
+  subscriptions AlertSubscription[]
+}
+
+model AlertSubscription {
+  id       String  @id @default(uuid())
+  user     User    @relation(fields: [userId], references: [id])
+  userId   String  @db.Uuid
+  alert    Alert   @relation(fields: [alertId], references: [id])
+  alertId  String  @db.Uuid
+  subscribedAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([alertId])
+}
+
+model InvitationToken {
+  token        String       @id @default(uuid())
+  targetType   TargetType
+  targetOrgId  String?      @db.Uuid
+  email        String
+  expiresAt    DateTime
+  used         Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+
+  @@index([email])
+  @@index([targetOrgId])
+}
+
+model PasswordResetToken {
+  token      String    @id @default(uuid())
+  user       User      @relation(fields: [userId], references: [id])
+  userId     String    @db.Uuid
+  expiresAt  DateTime
+  used       Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+
+  @@index([userId])
+}
+
+enum UserType {
+  VOLUNTEER
+  ORG_MEMBER
+  INST_MEMBER
+  ERCC_MEMBER
+}
+
+enum OrgKind {
+  NGO
+  INSTITUTION
+  ERCC
+}
+
+enum Role {
+  VOLUNTEER
+  INTERNAL_VOL
+  ORG_ADMIN
+  ORG_REPORTER
+  ORG_OPERATOR
+  INST_ADMIN
+  INST_REPORTER
+  INST_OPERATOR
+  GOV_ADMIN
+  GOV_REPORTER
+  GOV_OPERATOR
+  PLATFORM_ADMIN
+  PLATFORM_MODERATOR
+  ERCC_ADMIN
+  ERCC_REPORTER
+  ERCC_OPERATOR
+}
+
+enum Status {
+  PENDING
+  ACTIVE
+  SUSPENDED
+}
+
+enum AlertStatus {
+  PENDING_APPROVAL
+  ACTIVE
+  CLOSED
+}
+
+enum TargetType {
+  VOLUNTEER
+  ORG_MEMBER
+  INST_MEMBER
+  ERCC_MEMBER
+}
+
+enum Sex {
+  M
+  F
+  OTHER
+}
