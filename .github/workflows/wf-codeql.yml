@@ -24,8 +24,10 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
-          # This must be a YAML sequence under "languages:"
-          languages: ["javascript", "typescript"]
+          # A YAML sequence must be indented two spaces under "languages:"
+          languages:
+            - javascript
+            - typescript
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v3
