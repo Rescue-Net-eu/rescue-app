@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { HealthController } from './health.controller';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma.module';
 import { InvitationsModule } from './invitations/invitations.module';
@@ -21,5 +22,6 @@ import { PasswordResetModule } from './password-reset/password-reset.module';
     AlertsModule,
     PasswordResetModule,
   ],
+  controllers: [HealthController],
 })
 export class AppModule {}
