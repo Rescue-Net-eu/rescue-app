@@ -35,3 +35,23 @@ We welcome contributions from developers, designers, emergency response professi
 3. **Submit a pull request** with a clear description of your changes.
 
 For detailed guidelines, please refer to our [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## 🌐 Frontend
+
+A simple static frontend is provided in the `frontend/` directory. It allows basic user registration, mission creation and listing nearby missions through the REST API.
+
+To use the frontend during development, start the backend with Docker Compose and serve the static files using a simple HTTP server:
+
+```bash
+cd backend
+docker-compose up
+```
+
+In another terminal, run:
+
+```bash
+cd frontend
+python3 -m http.server 8080
+```
+
+Then open [http://localhost:8080](http://localhost:8080) in your browser.
