@@ -1,0 +1,17 @@
+node_modules
+**/node_modules
+npm-debug.log
+Dockerfile
+.dockerignore
+.git
+.gitignore
+
+# ignore local env files
+*.env
+.env.*
+
+# ignore output directories
+apps/api/dist
+apps/web/.next
+apps/mobile/android
+apps/mobile/ios
