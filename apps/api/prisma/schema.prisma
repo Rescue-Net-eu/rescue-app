@@ -85,6 +85,8 @@ model Alert {
   country     String
   region      String?
   localities  String[]       // array of strings
+  latitude    Float?         // optional GPS latitude
+  longitude   Float?         // optional GPS longitude
   status      AlertStatus    @default(PENDING_APPROVAL)
   createdBy   String         @db.Uuid
   createdAt   DateTime       @default(now())
