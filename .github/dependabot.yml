@@ -9,3 +9,7 @@ updates:
     directory: "/backend"
     schedule:
       interval: "daily"
+  - package-ecosystem: "gradle"
+    directory: "/mobile"
+    schedule:
+      interval: "daily"
