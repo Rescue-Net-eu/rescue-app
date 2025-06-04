@@ -77,3 +77,41 @@ Note:
 - All UI text (e.g., “Create Alert” / “Creează Alertă”, “Subscribe to Alert” / “Abonează-te la Alertă”, etc.) is managed via JSON files in `public/locales/{lang}/common.json` (web) and `src/locales/{lang}/common.json` (mobile).
 - The previous code, which did not implement membership endpoints or password-based authentication and lacked alert flow, has been fully replaced.
 - Ensure each file generated strictly follows this specification, including i18n and Transifex integration.
+
+## Running with Docker Compose
+
+1. Build and start all services (Postgres, API, Web):
+   ```bash
+   docker-compose up --build
+   ```
+
+2. Apply Prisma migrations inside the API container:
+
+   ```bash
+   docker-compose exec api npx prisma migrate dev --name init
+   ```
+
+   (Or use `npx prisma migrate deploy` in production.)
+
+Visit the web app at http://localhost:3001. The Next.js frontend automatically calls the API at http://api:3000 inside Docker.
+
+The API is available at http://localhost:3000. You can test the health endpoint:
+
+```bash
+curl http://localhost:3000/health
+```
+
+To stop and remove containers:
+
+```bash
+docker-compose down
+```
+
+If you need to reset the database data:
+
+```bash
+docker-compose down -v
+rm -rf postgres-data
+docker-compose up --build
+docker-compose exec api npx prisma migrate dev --name init
+```
