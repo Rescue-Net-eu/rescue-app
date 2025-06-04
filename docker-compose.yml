@@ -22,40 +22,42 @@ services:
     build:
       context: ./apps/api
       dockerfile: Dockerfile
-      target: runner
     container_name: rescue-net-api
     restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
     env_file:
-      - ./apps/api/.env
+      - ./.env
+    environment:
+      # You can override or inject here, but env_file is enough.
+    volumes:
+      - api-uploads:/app/uploads
     ports:
       - '3000:3000'
     networks:
-      - default
+      - rescue-net-network
 
   web:
     build:
       context: ./apps/web
       dockerfile: Dockerfile
-      target: runner
     container_name: rescue-net-web
     restart: unless-stopped
     depends_on:
       api:
         condition: service_started
     env_file:
-      - ./apps/web/.env
+      - ./.env
     ports:
       - '3001:3000'
     networks:
-      - default
+      - rescue-net-network
 
 volumes:
   postgres-data:
+  api-uploads:
 
 networks:
-  default:
-    name: rescue-net-network
+  rescue-net-network:
     driver: bridge

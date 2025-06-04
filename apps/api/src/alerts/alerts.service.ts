@@ -33,7 +33,7 @@ export class AlertsService {
         this.prisma.alertImage.create({
           data: {
             alertId: alert.id,
-            url: file.path,
+            url: `uploads/alerts/${file.filename}`,
           },
         })
       );

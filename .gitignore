@@ -1,9 +1,6 @@
 # Node.js
 node_modules/
 npm-debug.log*
-.env
-!apps/api/.env
-!apps/web/.env
 .DS_Store
 
 # Turborepo

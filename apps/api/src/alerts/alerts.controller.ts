@@ -20,7 +20,19 @@ import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { Role } from '@prisma/client';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { BadRequestException } from '@nestjs/common';
 import { Express } from 'express';
+
+const fileFilter = (req: any, file: Express.Multer.File, cb: Function) => {
+  const allowedMimes = ['image/jpeg', 'image/png', 'image/gif'];
+  if (!allowedMimes.includes(file.mimetype)) {
+    return cb(
+      new BadRequestException('Invalid file type. Only JPEG, PNG, and GIF are allowed.'),
+      false,
+    );
+  }
+  cb(null, true);
+};
 
 @Controller('alerts')
 export class AlertsController {
@@ -30,6 +42,7 @@ export class AlertsController {
   @Roles(Role.PLATFORM_ADMIN, Role.GOV_OPERATOR, Role.INST_OPERATOR, Role.ORG_OPERATOR, Role.ERCC_OPERATOR)
   @UseInterceptors(
     FileFieldsInterceptor([{ name: 'images', maxCount: 5 }], {
+      fileFilter,
       limits: { fileSize: 5 * 1024 * 1024 },
     }),
   )

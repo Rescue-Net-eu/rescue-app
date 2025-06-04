@@ -21,7 +21,6 @@ RUN npm ci --only=production
 
 COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/prisma ./prisma
-COPY --from=builder /usr/src/app/.env .env
 
 EXPOSE 3000
 ENV NODE_ENV=production
