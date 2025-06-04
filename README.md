@@ -55,16 +55,3 @@ python3 -m http.server 8080
 ```
 
 Then open [http://localhost:8080](http://localhost:8080) in your browser.
-
-## Managing Large Files
-
-This repository uses [Git LFS](https://git-lfs.com/) to store binary assets such as
-JAR files. If you plan to work with these files, make sure Git LFS is installed
-and initialized:
-
-```bash
-git lfs install
-```
-
-Tracked files will be listed in `.gitattributes`. New contributors should run the
-command above once to ensure Git LFS pointer files are handled correctly.
