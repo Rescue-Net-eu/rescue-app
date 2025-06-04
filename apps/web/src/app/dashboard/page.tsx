@@ -1,4 +1,5 @@
 'use client';
+export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
@@ -61,7 +62,9 @@ export default function DashboardPage() {
 
   return (
     <main className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl mb-4">{t('dashboard.welcome', { name: localStorage.getItem('userName') })}</h1>
+      <h1 className="text-2xl mb-4">
+        {t('dashboard.welcome', { name: typeof window !== 'undefined' ? localStorage.getItem('userName') : '' })}
+      </h1>
 
       <section className="mb-8">
         <h2 className="text-xl mb-2">{t('dashboard.view_missions')}</h2>

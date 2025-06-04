@@ -11,14 +11,22 @@
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
     "@nestjs/platform-express": "^11.0.0",
-    "@prisma/client": "^2.0.0",
+    "@prisma/client": "^5.14.0",
     "nestjs-prisma": "^0.25.0",
     "@nestjs/jwt": "^11.0.0",
-    "bcrypt": "^5.1.0"
+    "@nestjs/config": "^3.0.0",
+    "@nestjs/passport": "^11.0.0",
+    "passport-jwt": "^4.0.1",
+    "passport": "^0.6.0",
+    "nodemailer": "^6.9.11",
+    "date-fns": "^3.6.0",
+    "bcrypt": "^5.1.0",
+    "class-validator": "^0.14.0",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.0",
     "typescript": "^5.0.0",
-    "prisma": "^2.0.0"
+    "prisma": "^5.14.0"
   }
 }

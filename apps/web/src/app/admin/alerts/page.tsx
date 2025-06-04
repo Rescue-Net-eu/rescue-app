@@ -1,4 +1,5 @@
 'use client';
+export const dynamic = 'force-dynamic';
 
 import { useEffect, useState, ChangeEvent } from 'react';
 import { useTranslation } from 'next-i18next';
@@ -19,6 +20,9 @@ type Alert = {
 export default function AdminAlertsPage() {
   const { t } = useTranslation('common');
 
+  const token = typeof document !== 'undefined' ? document.cookie.replace('token=', '') : '';
+  const orgId = typeof window !== 'undefined' ? localStorage.getItem('orgId') || '' : '';
+
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -30,8 +34,6 @@ export default function AdminAlertsPage() {
   const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const token = document.cookie.replace('token=', '');
-  const orgId = localStorage.getItem('orgId') || '';
 
   const fetchAlerts = async () => {
     setLoading(true);

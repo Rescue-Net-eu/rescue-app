@@ -12,8 +12,7 @@ export default function SignupTokenScreen() {
   const { t } = useTranslation();
   const route = useRoute();
   const navigation = useNavigation();
-  // @ts-ignore
-  const { token } = route.params as RouteParams;
+  const { token } = (route.params as unknown as RouteParams);
 
   const [valid, setValid] = useState<boolean | null>(null);
   const [form, setForm] = useState({

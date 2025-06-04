@@ -24,6 +24,7 @@ model User {
   memberships   Membership[]
   missions      UserMission[]
   alerts        AlertSubscription[]
+  passwordResetTokens PasswordResetToken[]
 }
 
 model Organization {
@@ -37,7 +38,7 @@ model Organization {
   dpaAgreementUrl String?
   createdAt       DateTime  @default(now())
   memberships     Membership[]
-  alertsCreated   Alert[]   @relation("OrgAlerts", fields: [id], references: [sourceOrgId])
+  alertsCreated   Alert[]   @relation("OrgAlerts")
 }
 
 model Membership {
@@ -82,6 +83,7 @@ model Alert {
   title       String
   description String?
   sourceOrgId String         @db.Uuid
+  sourceOrg   Organization   @relation("OrgAlerts", fields: [sourceOrgId], references: [id])
   country     String
   region      String?
   localities  String[]       // array of strings
