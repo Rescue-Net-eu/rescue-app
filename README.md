@@ -1,57 +1,72 @@
-# 🆘 Rescue-Net
+# Rescue-Net.eu
 
-**[rescue-net.eu](https://rescue-net.eu)** is an open-source platform designed to coordinate and mobilize volunteers across Europe in real-time emergency situations. Inspired by similar localized initiatives, the project aims to empower communities to respond swiftly and effectively to crises.
+## Monorepo Structure
 
----
+- apps/web    — Next.js 15 + Tailwind (TypeScript, i18n for 24 EU languages)
+- apps/api    — NestJS 11 + Prisma 2 (TypeScript, authentication, CRUD, alert flow, membership management)
+- apps/mobile — React Native (TypeScript, i18n, same functionality as web)
+- packages/ui — shared React components (empty placeholder)
+- packages/types — shared TypeScript types (empty placeholder)
 
-## 🚀 Key Features
+## Existing Code Replaced
+- Static HTML+JS frontend was fully replaced by Next.js (web) and React Native (mobile),  
+  using i18n (next-i18next/react-i18next).  
+- Python backend (FastAPI) was fully replaced by NestJS+Prisma (including routing, CRUD, authentication,  
+  mission flow, alert flow, and membership management).
 
-- **Real-Time Alerts**: Instantly notify nearby volunteers of emergencies requiring immediate assistance.
+## Setup Instructions
+1. Clone the repo and install dependencies:
+   ```
+   npm install
+   ```
+2. Copy `.env.example` to `.env` and fill in:  
+   - `DATABASE_URL`  
+   - `SMTP_HOST`  
+   - `SMTP_PORT`  
+   - `SMTP_USER`  
+   - `SMTP_PASS`  
+   - `INVITE_BASE_URL`  
+3. Run Prisma migrations:
+   ```
+   cd apps/api
+   npx prisma migrate dev --name init
+   ```
+4. Optionally integrate translations with Transifex:  
+   - `tx push -s` to upload `en/common.json`.  
+   - After translations are complete, `tx pull -a --mode=reviewed` to retrieve translated files.  
+5. Start backend, web, and mobile:
+   ```
+   # Terminal 1 (backend):
+   cd apps/api
+   npm run start:dev
 
-- **Mission Tracking**: Monitor ongoing interventions with live updates, ensuring transparency and efficiency.
+   # Terminal 2 (web):
+   cd apps/web
+   npm run dev
 
-- **Volunteer Network**: Build and manage a robust database of trained individuals ready to assist when needed.
+   # Terminal 3 (mobile iOS - macOS):
+   cd apps/mobile
+   npx react-native run-ios
 
-- **Authority Integration**: Seamlessly collaborate with local and national authorities through interoperable systems.
+   # Terminal 4 (mobile Android):
+   cd apps/mobile
+   npx react-native run-android
+   ```
+6. Test the flows:
+   - **Volunteer**:  
+     • `http://localhost:3000/signup/<token>` (fill out form, texts appear in chosen language).  
+     • `http://localhost:3000/signup/direct` (direct signup).  
+     • `http://localhost:3000/login` (login, JWT storage).  
+     • `http://localhost:3000/dashboard` (view missions and local alerts, subscribe).  
+     • **Mobile**: open the app, use SignupToken, SignupDirect, Login, VolunteerDashboard screens, verify texts appear in device language or manually changed language.  
+   - **Operator/Admin**:  
+     • `http://localhost:3000/admin/alerts` (create alert, view/approve, filter).  
+     • On mobile, use the AdminAlertsScreen to create/approve alerts.  
+   - **Memberships**:  
+     • Verify membership management endpoints (GET /memberships, POST /memberships, PATCH /memberships/:id, DELETE /memberships/:id).  
+   - **PLATFORM_ADMIN**: access global dashboard to approve PENDING_APPROVAL alerts (PATCH `/api/alerts/:id/status`).  
 
-- **GDPR Compliance**: Prioritize user privacy and data protection in line with European regulations.
-
----
-
-## 🧱 Modular & Scalable Architecture
-
-Built with scalability in mind, **rescue-net.eu** employs a modular design that allows for easy integration of new features and adaptation to various regional requirements. This ensures the platform can evolve alongside the changing needs of emergency response across different European contexts.
-
----
-
-## 🤝 Contributing
-
-We welcome contributions from developers, designers, emergency response professionals, and anyone passionate about community-driven crisis management. To get started:
-
-1. **Fork the repository**.
-
-2. **Create a new branch** for your feature or fix.
-
-3. **Submit a pull request** with a clear description of your changes.
-
-For detailed guidelines, please refer to our [CONTRIBUTING.md](CONTRIBUTING.md).
-
-## 🌐 Frontend
-
-A simple static frontend is provided in the `frontend/` directory. It allows basic user registration, mission creation and listing nearby missions through the REST API.
-
-To use the frontend during development, start the backend with Docker Compose and serve the static files using a simple HTTP server:
-
-```bash
-cd backend
-docker-compose up
-```
-
-In another terminal, run:
-
-```bash
-cd frontend
-python3 -m http.server 8080
-```
-
-Then open [http://localhost:8080](http://localhost:8080) in your browser.
+Note:  
+ - All UI text (e.g., “Create Alert” / “Creează Alertă”, “Subscribe to Alert” / “Abonează-te la Alertă”, etc.) is managed via JSON files in `public/locales/{lang}/common.json` (web) and `src/locales/{lang}/common.json` (mobile).  
+ - The previous code, which did not implement membership endpoints or password-based authentication and lacked alert flow, has been fully replaced.  
+ - Ensure each file generated by Codex strictly follows the structure and content specified, including i18n and Transifex integration.
