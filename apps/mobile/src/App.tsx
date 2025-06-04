@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { I18nextProvider } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import messaging from '@react-native-firebase/messaging';
 import i18n from './i18n';
 
 import SignupTokenScreen from './screens/SignupTokenScreen';
@@ -22,6 +23,13 @@ export default function App() {
         setInitialRoute('VolunteerDashboard');
       }
     });
+
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      // Handle foreground message
+      console.log('Foreground message', remoteMessage);
+    });
+
+    return unsubscribe;
   }, []);
 
   return (

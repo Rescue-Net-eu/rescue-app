@@ -6,10 +6,12 @@ import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { BadRequestException } from '@nestjs/common';
+import { PushModule } from '../push/push.module';
 
 @Module({
   imports: [
     PrismaModule,
+    PushModule,
     MulterModule.register({
       storage: diskStorage({
         destination: './uploads/alerts',
