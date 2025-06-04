@@ -1,3 +1,5 @@
+'use client';
+export const dynamic = 'force-dynamic';
 import { useTranslation } from 'next-i18next';
 
 export default function SignupSuccessPage() {

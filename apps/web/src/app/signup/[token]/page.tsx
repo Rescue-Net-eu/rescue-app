@@ -1,4 +1,5 @@
 'use client';
+export const dynamic = 'force-dynamic';
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -13,9 +14,10 @@ type FormData = {
   city: string;
 };
 
-export default function VolunteerSignupPage({ params }: { params: { token: string } }) {
+export default function VolunteerSignupPage(props: any) {
+  const { params } = props;
   const router = useRouter();
-  const { token } = params;
+  const { token } = params as { token: string };
   const { t } = useTranslation('common');
   const [valid, setValid] = useState<boolean | null>(null);
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
