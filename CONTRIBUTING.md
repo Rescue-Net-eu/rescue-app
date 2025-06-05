@@ -6,26 +6,31 @@ We welcome contributions that help improve the Rescue-Net platform. Please follo
 
 1. **Fork** the repository on GitHub.
 2. **Clone** your fork and create a new branch for your changes.
-3. Install the backend dependencies using:
+3. From the repository root, install all dependencies:
    ```bash
-   pip install -r backend/requirements.txt
+   npm install
    ```
-4. Start the backend with Docker Compose:
+4. Start the API service:
    ```bash
-   cd backend
-   docker-compose up
+   cd apps/api
+   npm run start:dev
    ```
-5. Optionally run the simple frontend server:
+5. In a new terminal, start the web frontend:
    ```bash
-   cd ../frontend
-   python3 -m http.server 8080
+   cd apps/web
+   npm run dev
+   ```
+6. Optionally start the React Native app:
+   ```bash
+   cd apps/mobile
+   npm run ios   # or npm run android
    ```
 
 ## Coding Guidelines
 
-- Follow standard [PEP 8](https://www.python.org/dev/peps/pep-0008/) style for Python code.
+- Use [Prettier](https://prettier.io/) to format TypeScript and JavaScript code.
 - Keep commits focused and include clear commit messages describing the changes.
-- When adding new functionality, provide docstrings and comments as needed.
+- When adding new functionality, include comments or documentation where helpful.
 
 ## Pull Requests
 
