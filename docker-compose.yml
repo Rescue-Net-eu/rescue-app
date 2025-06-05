@@ -47,6 +47,9 @@ services:
         condition: service_started
     env_file:
       - ./.env
+    environment:
+      - NEXT_PUBLIC_API_URL=http://api:3000
+      - NEXT_PUBLIC_VAPID_KEY=${NEXT_PUBLIC_VAPID_KEY}
     ports:
       - '3001:3000'
     networks:
