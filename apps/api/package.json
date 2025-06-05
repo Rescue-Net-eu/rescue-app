@@ -22,7 +22,7 @@
     "date-fns": "^3.6.0",
     "bcrypt": "^5.1.0",
     "class-validator": "^0.14.0",
-    "uuid": "^9.0.1",
+    "uuid": "^11.1.0",
     "firebase-admin": "^11.10.1",
     "apn": "^2.2.0"
   },
