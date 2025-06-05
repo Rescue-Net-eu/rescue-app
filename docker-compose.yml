@@ -29,8 +29,6 @@ services:
         condition: service_healthy
     env_file:
       - ./.env
-    environment:
-      # You can override or inject here, but env_file is enough.
     volumes:
       - api-uploads:/app/uploads
     ports:
