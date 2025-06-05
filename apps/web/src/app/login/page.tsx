@@ -24,7 +24,9 @@ export default function LoginPage() {
     });
     if (res.ok) {
       const { access_token } = await res.json();
-      document.cookie = `token=${access_token}; path=/; HttpOnly`;
+      const payload = JSON.parse(atob(access_token.split('.')[1]));
+      localStorage.setItem('userId', payload.sub);
+      document.cookie = `token=${access_token}; path=/`;
       router.push('/dashboard');
     } else {
       alert(t('login.error_invalid'));
