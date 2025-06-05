@@ -22,13 +22,11 @@ Ensure you have **Node.js 20** or higher installed.
 npm install
 ```
 
-2. Copy `.env.example` to `.env` and complete:
+2. Copy `.env.example` to `.env` and fill in:
 - `DATABASE_URL`
-- `SMTP_HOST`
-- `SMTP_PORT`
-- `SMTP_USER`
-- `SMTP_PASS`
-- `INVITE_BASE_URL`
+- `JWT_SECRET`
+- `NEXT_PUBLIC_API_URL`
+- `NEXT_PUBLIC_VAPID_KEY`
 
 3. Run Prisma migrations:
 ```bash
