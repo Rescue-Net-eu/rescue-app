@@ -29,6 +29,32 @@ export class MissionsController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(
+    Role.PLATFORM_ADMIN,
+    Role.GOV_OPERATOR,
+    Role.INST_OPERATOR,
+    Role.ORG_OPERATOR,
+    Role.ERCC_OPERATOR,
+  )
+  @Get('summary')
+  summary() {
+    return this.missionsService.summary();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(
+    Role.PLATFORM_ADMIN,
+    Role.GOV_OPERATOR,
+    Role.INST_OPERATOR,
+    Role.ORG_OPERATOR,
+    Role.ERCC_OPERATOR,
+  )
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.missionsService.findOne(id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.PLATFORM_ADMIN, Role.GOV_OPERATOR, Role.INST_OPERATOR, Role.ORG_OPERATOR, Role.ERCC_OPERATOR)
   @Post()
   create(@Body() dto: CreateMissionDto, @Req() req: any) {
