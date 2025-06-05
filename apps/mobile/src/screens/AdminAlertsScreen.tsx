@@ -8,9 +8,12 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { launchImageLibrary, Asset } from 'react-native-image-picker';
+import { request, PERMISSIONS } from 'react-native-permissions';
+import Geolocation from '@react-native-community/geolocation';
 import { useTranslation } from 'react-i18next';
 
 type AlertType = {
@@ -58,22 +61,33 @@ export default function AdminAlertsScreen() {
     fetchAlerts();
   }, []);
 
-  const grabMyLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setLatitude(pos.coords.latitude.toString());
-          setLongitude(pos.coords.longitude.toString());
-        },
-        (err) => {
-          console.error(err);
-          Alert.alert('Unable to get location, please enter manually.');
-        },
-        { enableHighAccuracy: true },
-      );
-    } else {
-      Alert.alert('Geolocation not supported.');
+  const requestLocationPermission = async () => {
+    const status = await request(
+      Platform.OS === 'ios'
+        ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
+        : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+    );
+    return status === 'granted';
+  };
+
+  const grabMyLocation = async () => {
+    const permitted = await requestLocationPermission();
+    if (!permitted) {
+      Alert.alert('Permission denied');
+      return;
     }
+
+    Geolocation.getCurrentPosition(
+      (pos) => {
+        setLatitude(pos.coords.latitude.toString());
+        setLongitude(pos.coords.longitude.toString());
+      },
+      (err) => {
+        console.error(err);
+        Alert.alert('Unable to get location, please enter manually.');
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 1000 },
+    );
   };
 
   const pickImages = async () => {
