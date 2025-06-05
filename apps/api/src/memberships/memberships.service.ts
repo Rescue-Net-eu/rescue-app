@@ -17,7 +17,7 @@ export class MembershipsService {
     return this.prisma.membership.create({
       data: {
         userId: dto.userId,
-        orgId: dto.orgId,
+        ...(dto.orgId ? { orgId: dto.orgId } : {}),
         role: dto.role,
         activeByOrg: dto.activeByOrg ?? false,
         activeByUser: dto.activeByUser ?? true,
