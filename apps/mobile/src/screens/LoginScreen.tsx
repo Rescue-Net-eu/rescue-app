@@ -23,8 +23,9 @@ export default function LoginScreen() {
     });
     if (res.ok) {
       const { access_token } = await res.json();
+      const payload = JSON.parse(atob(access_token.split('.')[1]));
       await AsyncStorage.setItem('token', access_token);
-      await AsyncStorage.setItem('userId', access_token.split('.')[1]);
+      await AsyncStorage.setItem('userId', payload.sub);
 
       const perm = await request(
         Platform.OS === 'ios'
