@@ -4,6 +4,7 @@ import { PushService } from '../push/push.service';
 import { CreateAlertDto } from './dto/create-alert.dto';
 import { UpdateAlertStatusDto } from './dto/update-alert-status.dto';
 import { Express } from 'express';
+import * as path from 'path';
 
 @Injectable()
 export class AlertsService {
@@ -30,14 +31,17 @@ export class AlertsService {
     });
 
     if (files && files.length > 0) {
-      const createImages = files.map((file) =>
-        this.prisma.alertImage.create({
+      const createImages = files.map((file) => {
+        const safeName = path
+          .basename(file.originalname)
+          .replace(/[^a-zA-Z0-9._-]/g, '_');
+        return this.prisma.alertImage.create({
           data: {
             alertId: alert.id,
-            url: `uploads/alerts/${file.filename}`,
+            url: `uploads/alerts/${safeName}`,
           },
-        })
-      );
+        });
+      });
       await Promise.all(createImages);
     }
 
