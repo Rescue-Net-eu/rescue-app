@@ -11,6 +11,18 @@ export class MissionsService {
     return this.prisma.mission.findMany();
   }
 
+  async findOne(id: string) {
+    const mission = await this.prisma.mission.findUnique({ where: { id } });
+    if (!mission) throw new NotFoundException('Mission not found');
+    return mission;
+  }
+
+  async summary() {
+    const totalMissions = await this.prisma.mission.count();
+    const totalAssignments = await this.prisma.userMission.count();
+    return { totalMissions, totalAssignments };
+  }
+
   async create(dto: CreateMissionDto, userId: string) {
     return this.prisma.mission.create({
       data: {
