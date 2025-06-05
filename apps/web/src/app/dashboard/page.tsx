@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
+import api from '../../utils/api';
 
 type Mission = {
   id: string;
@@ -26,7 +27,7 @@ export default function DashboardPage() {
 
   const fetchMissions = async () => {
     setLoadingMissions(true);
-    const res = await fetch('/api/missions', {
+    const res = await api('/api/missions', {
       headers: { Authorization: `Bearer ${document.cookie.replace('token=', '')}` },
     });
     const data = await res.json();
@@ -35,7 +36,7 @@ export default function DashboardPage() {
   };
 
   const subscribeToMission = async (missionId: string) => {
-    await fetch(`/api/missions/${missionId}/assign/${localStorage.getItem('userId')}`, {
+    await api(`/api/missions/${missionId}/assign/${localStorage.getItem('userId')}`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${document.cookie.replace('token=', '')}` },
     });
@@ -44,7 +45,7 @@ export default function DashboardPage() {
 
   const fetchAlerts = async () => {
     setLoadingAlerts(true);
-    const res = await fetch('/api/alerts?scope=local', {
+    const res = await api('/api/alerts?scope=local', {
       headers: { Authorization: `Bearer ${document.cookie.replace('token=', '')}` },
     });
     const data = await res.json();
@@ -53,7 +54,7 @@ export default function DashboardPage() {
   };
 
   const subscribeToAlert = async (alertId: string) => {
-    await fetch(`/api/alerts/${alertId}/subscribe/${localStorage.getItem('userId')}`, {
+    await api(`/api/alerts/${alertId}/subscribe/${localStorage.getItem('userId')}`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${document.cookie.replace('token=', '')}` },
     });
