@@ -27,3 +27,4 @@ apps/mobile/node_modules/
 apps/mobile/ios/Pods/
 apps/mobile/android/app/build/
 apps/mobile/ios/build/
+.env

@@ -1,16 +1,25 @@
-import { FlatCompat } from '@eslint/eslintrc';
+import js from '@eslint/js';
+import tseslint from '@typescript-eslint/eslint-plugin';
+import tsParser from '@typescript-eslint/parser';
 
-const compat = new FlatCompat();
-
-export default compat.config({
-  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
-  parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint'],
-  env: {
-    es2021: true,
-    node: true,
+/** @type {import('eslint').Linter.FlatConfig[]} */
+export default [
+  {
+    ignores: ['node_modules/**'],
   },
-  rules: {
-    '@typescript-eslint/no-empty-function': 'off',
+  js.configs.recommended,
+  {
+    files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
+    languageOptions: {
+      parser: tsParser,
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+    },
+    plugins: {
+      '@typescript-eslint': tseslint,
+    },
+    rules: {
+      ...tseslint.configs.recommended.rules,
+    },
   },
-});
+];

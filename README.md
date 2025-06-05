@@ -15,6 +15,8 @@
 
 ## Setup Instructions
 
+Ensure you have **Node.js 20** or higher installed.
+
 1. Clone repo and install dependencies:
 ```bash
 npm install

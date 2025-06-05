@@ -6,7 +6,8 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
-    "lint": "eslint ."
+    "lint": "ESLINT_USE_FLAT_CONFIG=false eslint -c .eslintrc.js . --ext .js,.jsx,.ts,.tsx"
+
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.17.11",
