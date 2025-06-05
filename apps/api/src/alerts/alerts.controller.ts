@@ -23,17 +23,6 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { BadRequestException } from '@nestjs/common';
 import { Express } from 'express';
 
-const fileFilter = (req: any, file: Express.Multer.File, cb: Function) => {
-  const allowedMimes = ['image/jpeg', 'image/png', 'image/gif'];
-  if (!allowedMimes.includes(file.mimetype)) {
-    return cb(
-      new BadRequestException('Invalid file type. Only JPEG, PNG, and GIF are allowed.'),
-      false,
-    );
-  }
-  cb(null, true);
-};
-
 @Controller('alerts')
 export class AlertsController {
   constructor(private readonly alertsService: AlertsService) {}
@@ -42,7 +31,16 @@ export class AlertsController {
   @Roles(Role.PLATFORM_ADMIN, Role.GOV_OPERATOR, Role.INST_OPERATOR, Role.ORG_OPERATOR, Role.ERCC_OPERATOR)
   @UseInterceptors(
     FileFieldsInterceptor([{ name: 'images', maxCount: 5 }], {
-      fileFilter,
+      fileFilter: (req, file, cb) => {
+        const allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+        if (!allowedMimes.includes(file.mimetype)) {
+          return cb(
+            new BadRequestException('Only JPEG, PNG, or WEBP images are allowed'),
+            false,
+          );
+        }
+        cb(null, true);
+      },
       limits: { fileSize: 5 * 1024 * 1024 },
     }),
   )
