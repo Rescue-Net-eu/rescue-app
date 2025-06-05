@@ -13,7 +13,10 @@ import { PushModule } from './push/push.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '../../.env',
+    }),
     PrismaModule,
     InvitationsModule,
     AuthModule,
