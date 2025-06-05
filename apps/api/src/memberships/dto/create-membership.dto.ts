@@ -5,8 +5,9 @@ export class CreateMembershipDto {
   @IsUUID()
   userId: string;
 
+  @IsOptional()
   @IsUUID()
-  orgId: string;
+  orgId?: string;
 
   @IsEnum(Role)
   role: Role;

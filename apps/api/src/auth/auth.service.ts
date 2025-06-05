@@ -102,7 +102,6 @@ export class AuthService {
     await this.prisma.membership.create({
       data: {
         userId: user.id,
-        orgId: '',
         role: 'VOLUNTEER',
         activeByOrg: false,
         activeByUser: true,
