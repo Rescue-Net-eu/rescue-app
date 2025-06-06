@@ -1,13 +1,1 @@
-{
-  "compilerOptions": {
-    "target": "esnext",
-    "lib": ["esnext"],
-    "jsx": "react-native",
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "noEmit": true,
-    "strict": true,
-    "skipLibCheck": true
-  },
-  "include": ["src"]
-}
+// tsconfig.json — auto-generated placeholder
