@@ -1,11 +1,1 @@
-import { Module } from '@nestjs/common';
-import { PasswordResetService } from './password-reset.service';
-import { PasswordResetController } from './password-reset.controller';
-import { PrismaModule } from '../prisma.module';
-
-@Module({
-  imports: [PrismaModule],
-  providers: [PasswordResetService],
-  controllers: [PasswordResetController],
-})
-export class PasswordResetModule {}
+// password-reset.module.ts — auto-generated placeholder
